@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SongController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ArtistController;
@@ -45,3 +46,7 @@ Route::delete('/artists/{id}', [ArtistController::class,'destroy']);
 Route::get('/albums', [AlbumController::class,'index']);
 Route::get('/albums/{id}', [AlbumController::class,'show']);
 Route::post('/add-album', [AlbumController::class,'store']);
+
+Route::get('/playlists', [PlaylistController::class, 'index']);
+Route::middleware('auth:sanctum')->post('/add-new-playlist', [PlaylistController::class,'store']);
+Route::middleware('auth:sanctum')->post('/playlists/{id}/add-song', [PlaylistController::class,'addSong']);

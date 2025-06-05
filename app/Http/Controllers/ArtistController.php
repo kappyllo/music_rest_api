@@ -9,7 +9,7 @@ class ArtistController extends Controller
 {
     public function index()
     {
-        $artists = Artist::all();
+        $artists = Artist::with(["albums", "songs"])->orderBy("id")->paginate(10);
         return response()->json($artists);        
     }
 

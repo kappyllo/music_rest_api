@@ -10,7 +10,7 @@ class AlbumController extends Controller
 
     public function index()
     {
-        $album = Album::all();
+        $album = Album::with(["artist", "songs"])->orderBy("id")->paginate(10);
         return response()->json($album); 
     }
 

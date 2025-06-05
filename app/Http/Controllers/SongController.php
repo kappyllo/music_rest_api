@@ -7,8 +7,8 @@ use App\Models\Song;
 
 class SongController extends Controller 
 {
-    public function index(Request $request) {
-        $songs = Song::orderBy("created_at","desc")->paginate(10);
+    public function index() {
+        $songs = Song::with(["artist", "album"])->orderBy("created_at")->paginate(10);
         return response()->json($songs);
     }
 
