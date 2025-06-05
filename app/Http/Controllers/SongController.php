@@ -15,8 +15,8 @@ class SongController extends Controller
     public function store(Request $request) {
         $validated = $request->validate([
             "title" => ["required"],
-            "artist" => ["required"],
-            "album" => ["required"]
+            "artist_id" => ["required", "exists:artists,id"],
+            "album_id" => ["required", "exists:albums,id"]
         ]);
 
         $song = Song::create($validated);
@@ -34,6 +34,17 @@ class SongController extends Controller
         } else {
         return response()->json($song);
         }
+    }
+
+    public function destroy($id)
+    {
+        $song = Song::find($id);
+        if (!$song) {
+            abort(404, "Song not found");
+        }
+
+        $song->delete();
+        return response()->json(["message" => "Song delated succesfully"], 200);
     }
 
 }

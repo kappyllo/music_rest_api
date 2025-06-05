@@ -35,6 +35,7 @@ Route::get('/users', [UserController::class,'index']);
 Route::get('/songs', [SongController::class,'index']);
 Route::post('/add-song', [SongController::class,'store']);
 Route::get('/songs/{id}', [SongController::class,'show']);
+Route::delete('/songs/{id}', [SongController::class,'destroy']);
 
 Route::get('/artists', [ArtistController::class,'index']);
 Route::post('/add-artist', [ArtistController::class,'store']);
