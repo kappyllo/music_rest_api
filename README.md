@@ -1,66 +1,189 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Dokumentacja API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Spis treści
 
-## About Laravel
+- [Rejestracja użytkownika](#rejestracja-użytkownika)
+- [Logowanie](#logowanie)
+- [Wylogowanie](#wylogowanie)
+- [Użytkownicy](#użytkownicy)
+- [Piosenki](#piosenki)
+- [Artyści](#artyści)
+- [Albumy](#albumy)
+- [Playlisty](#playlisty)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Rejestracja użytkownika
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**POST** `/api/register`
 
-## Learning Laravel
+Rejestruje nowego użytkownika.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Request Body
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+}
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Response
 
-## Laravel Sponsors
+    201 Created – użytkownik utworzony
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+    422 Unprocessable Entity – błąd walidacji
 
-### Premium Partners
+## Logowanie
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+POST /api/login
 
-## Contributing
+Loguje użytkownika i zwraca token.
+### Request Body
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Response
 
-## Code of Conduct
+    200 OK – token i dane użytkownika
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    401 Unauthorized – nieprawidłowe dane logowania
 
-## Security Vulnerabilities
+## Wylogowanie
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+POST /api/logout
 
-## License
+Wylogowuje zalogowanego użytkownika.
+Headers
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Authorization: Bearer {token}
+
+Response
+
+    200 OK – wylogowano
+
+    401 Unauthorized – brak autoryzacji
+
+Pobierz dane zalogowanego użytkownika
+
+GET /api/user
+
+Zwraca dane aktualnie zalogowanego użytkownika.
+Headers
+
+Authorization: Bearer {token}
+
+Response
+
+    200 OK – dane użytkownika
+
+    401 Unauthorized – brak autoryzacji
+
+## Użytkownicy
+
+GET /api/users
+
+Zwraca listę użytkowników.
+Response
+
+    200 OK – lista użytkowników
+
+## Piosenki
+| Metoda | Endpoint          | Opis                   | Autoryzacja |
+| ------ | ----------------- | ---------------------- | ----------- |
+| GET    | `/api/songs`      | Pobierz listę piosenek | Nie         |
+| POST   | `/api/add-song`   | Dodaj nową piosenkę    | Nie         |
+| GET    | `/api/songs/{id}` | Pobierz piosenkę po ID | Nie         |
+| DELETE | `/api/songs/{id}` | Usuń piosenkę po ID    | Nie         |
+
+Przykład Request Body dla POST /api/add-song
+```json
+{
+  "title": "string",
+  "artist_id": 1,
+  "album_id": 1,
+  "duration": 180
+}
+```
+
+## Artyści
+| Metoda | Endpoint            | Opis                   | Autoryzacja |
+| ------ | ------------------- | ---------------------- | ----------- |
+| GET    | `/api/artists`      | Pobierz listę artystów | Nie         |
+| POST   | `/api/add-artist`   | Dodaj nowego artystę   | Nie         |
+| GET    | `/api/artists/{id}` | Pobierz artystę po ID  | Nie         |
+| DELETE | `/api/artists/{id}` | Usuń artystę po ID     | Nie         |
+
+Przykład Request Body dla POST /api/add-artist
+```json
+{
+  "name": "string"
+}
+```
+
+## Albumy
+| Metoda | Endpoint           | Opis                  | Autoryzacja |
+| ------ | ------------------ | --------------------- | ----------- |
+| GET    | `/api/albums`      | Pobierz listę albumów | Nie         |
+| GET    | `/api/albums/{id}` | Pobierz album po ID   | Nie         |
+| POST   | `/api/add-album`   | Dodaj nowy album      | Nie         |
+
+Przykład Request Body dla POST /api/add-album
+```json
+{
+  "title": "string",
+  "artist_id": 1,
+  "release_date": "2025"
+}
+```
+
+## Playlisty
+| Metoda | Endpoint                          | Opis                        | Autoryzacja      |
+| ------ | --------------------------------- | --------------------------- | ---------------- |
+| GET    | `/api/playlists`                  | Pobierz listę playlist      | Nie              |
+| POST   | `/api/add-new-playlist`           | Utwórz nową playlistę       | Tak              |
+| POST   | `/api/playlists/{id}/add-song`    | Dodaj piosenkę do playlisty | Tak (właściciel) |
+| POST   | `/api/playlists/{id}/delete-song` | Usuń piosenkę z playlisty   | Tak (właściciel) |
+
+Przykład Request Body dla POST /api/add-new-playlist
+```json
+{
+  "name": "string",
+}
+```
+
+Przykład Request Body dla POST /api/playlists/{id}/add-song i /api/playlists/{id}/delete-song
+```json
+{
+  "song_id": 1
+}
+```
+
+Headers dla endpointów wymagających autoryzacji
+
+Authorization: Bearer {token}
+
+Możliwe odpowiedzi
+
+    200 OK – operacja wykonana pomyślnie
+
+    201 Created – zasób utworzony (np. nowa playlista)
+
+    401 Unauthorized – brak autoryzacji (np. brak tokena lub nieprawidłowy)
+
+    403 Forbidden – brak uprawnień (np. użytkownik nie jest właścicielem playlisty)
+
+    422 Unprocessable Entity – błąd walidacji
+
+Uwagi końcowe
+
+    Wszystkie dane są przesyłane i zwracane w formacie JSON.
+
+    Endpointy wymagające autoryzacji muszą zawierać nagłówek Authorization: Bearer {token}.
+
+    W przypadku błędów walidacji, API zwraca status 422 i szczegóły błędów w odpowiedzi.
