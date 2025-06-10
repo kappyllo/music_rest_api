@@ -39,3 +39,4 @@ Route::post('/add-album', [AlbumController::class,'store']);
 Route::get('/playlists', [PlaylistController::class, 'index']);
 Route::middleware('auth:sanctum')->post('/add-new-playlist', [PlaylistController::class,'store']);
 Route::middleware('auth:sanctum')->post('/playlists/{id}/add-song', [PlaylistController::class,'addSong']);
+Route::middleware('auth:sanctum')->delete('/playlists/{id}/remove-song', [PlaylistController::class,'removeSong']);

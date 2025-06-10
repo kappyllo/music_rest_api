@@ -70,14 +70,39 @@ class PlaylistTest extends TestCase
         ]);
 
         $token = $loginResponse->json('token');
-
         $playlist = Playlist::factory()->create(['user_id' => $user->id]);
-
         $songData = Song::factory()->create()->toArray();
-
         $response = $this->withHeaders(['Authorization' => "Bearer $token"])->post("/api/playlists/{$playlist->id}/add-song", ['song_id' => $songData['id']], ['Accept'=> 'application/json']);
-
         $response->assertStatus(200);
 
     }
+
+    public function test_user_can_remove_song_from_playlist_they_own(): void
+    {
+        $password = "password123";
+        $user = User::factory()->create([
+            'password' => $password,
+        ]);
+
+        $loginResponse = $this->post('/api/login', [
+            'email'=> $user->email,
+            'password'=> $password,
+        ]);
+
+        $token = $loginResponse->json('token');
+        $playlist = Playlist::factory()->create(['user_id' => $user->id]);
+        $songData = Song::factory()->create()->toArray();
+        $responseFromSongAdd = $this->withHeaders(['Authorization' => "Bearer $token"])->post("/api/playlists/{$playlist->id}/add-song", ['song_id' => $songData['id']], ['Accept'=> 'application/json']);
+
+        $response = $this->withHeaders(['Authorization' => "Bearer $token"])->delete("/api/playlists/{$playlist->id}/remove-song", ['song_id' => $songData['id']], ['Accept'=> 'application/json']);
+        $response->assertStatus(200);
+    }
+
+    public function test_user_cannot_remove_song_from_playlist_they_do_not_own(): void
+    {
+        $response = $this->delete('/api/playlists/1/remove-song', [], ['Accept' => 'application/json']);
+
+        $this->assertContains($response->getStatusCode(), [401, 403]);
+    }
 }
+

@@ -56,8 +56,16 @@ class PlaylistController extends Controller
         return response()->json($playlist);
     }
 
-    public function destroy(Playlist $playlist)
+    public function removeSong(Request $request, $id)
     {
-        //
+        $playlist = Playlist::findOrFail($id);
+
+        if ($playlist->user_id !== auth()->id()) {
+            abort(403, "It is not your playlist.");
+        }
+
+        $playlist->songs()->detach($request->song_id);
+
+        return response()->json($playlist->load('songs'), 200);
     }
 }
